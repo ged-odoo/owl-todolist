@@ -14,16 +14,16 @@
           title: "clean house",
           isCompleted: false,
         },
-      ];
+    ];
 
     class App extends Component {
         static template = xml/* xml */ `
           <div class="task-list">
               <t t-foreach="tasks" t-as="task" t-key="task.id">
-                  <div class="task">
-                      <input type="checkbox" t-att-checked="task.isCompleted"/>
-                      <span><t t-esc="task.title"/></span>
-                  </div>
+                <div class="task" t-att-class="task.isCompleted ? 'done' : ''">
+                  <input type="checkbox" t-att-checked="task.isCompleted"/>
+                  <span><t t-esc="task.title"/></span>
+                </div>
               </t>
           </div>`;
       

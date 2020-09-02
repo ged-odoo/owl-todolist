@@ -1,0 +1,15 @@
+.task-list {
+    width: 300px;
+    margin: 50px auto;
+    background: aliceblue;
+    padding: 10px;
+  }
+  
+  .task {
+    font-size: 18px;
+    color: #111111;
+  }
+
+  .task.done {
+    opacity: 0.7;
+  }
