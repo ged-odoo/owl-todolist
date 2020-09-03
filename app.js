@@ -3,7 +3,7 @@
     const { xml } = owl.tags;
     const { whenReady } = owl.utils;
     
-    const { useRef } = owl.hooks;
+    const { useRef, useState } = owl.hooks;
 
     // -------------------------------------------------------------------------
     // Task Component
@@ -37,7 +37,7 @@
         static components = { Task };
 
         nextId = 1;
-        tasks = [];
+        tasks = useState([]);
         inputRef = useRef("add-input");
 
         mounted() {
