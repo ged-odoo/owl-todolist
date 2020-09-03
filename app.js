@@ -50,10 +50,9 @@
         inputRef = useRef("add-input");
 
 
-        constructor(localStorage) {
+        constructor() {
             super();
-            this.localStorage = localStorage;
-            const tasks = this.localStorage.getItem("todoapp");
+            const tasks = this.env.localStorage.getItem("todoapp");
             if (tasks) {
                 for (let task of JSON.parse(tasks)) {
                     this.tasks.push(task);
@@ -78,7 +77,7 @@
                         isCompleted: false,
                     };
                     this.tasks.push(newTask);
-                    this.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
+                    this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
                 }
             }
         }
@@ -86,19 +85,20 @@
         toggleTask(ev) {
             const task = this.tasks.find(t => t.id === ev.detail.id);
             task.isCompleted = !task.isCompleted;
-            this.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
+            this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
         }
  
         deleteTask(ev) {
             const index = this.tasks.findIndex(t => t.id === ev.detail.id);
             this.tasks.splice(index, 1);
-            this.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
+            this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
         }
     }
 
     // Setup code
     function setup() {
-      const app = new App(window.localStorage);
+      App.env.localStorage = window.localStorage;
+      const app = new App();
       app.mount(document.body);
     }
     
