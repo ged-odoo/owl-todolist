@@ -49,6 +49,18 @@
         tasks = useState([]);
         inputRef = useRef("add-input");
 
+
+        constructor() {
+            super(...arguments);
+            const tasks = localStorage.getItem("todoapp");
+            if (tasks) {
+                for (let task of JSON.parse(tasks)) {
+                    this.tasks.push(task);
+                    this.nextId = Math.max(this.nextId, task.id + 1);
+                }
+            }
+        }
+
         mounted() {
             this.inputRef.el.focus();
         }
@@ -65,6 +77,7 @@
                         isCompleted: false,
                     };
                     this.tasks.push(newTask);
+                    localStorage.setItem("todoapp", JSON.stringify(this.tasks));
                 }
             }
         }
@@ -72,11 +85,13 @@
         toggleTask(ev) {
             const task = this.tasks.find(t => t.id === ev.detail.id);
             task.isCompleted = !task.isCompleted;
+            localStorage.setItem("todoapp", JSON.stringify(this.tasks));
         }
  
         deleteTask(ev) {
             const index = this.tasks.findIndex(t => t.id === ev.detail.id);
             this.tasks.splice(index, 1);
+            localStorage.setItem("todoapp", JSON.stringify(this.tasks));
         }
     }
 
