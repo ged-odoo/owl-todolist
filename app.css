@@ -1,8 +1,21 @@
-.task-list {
+  .todo-app {
     width: 300px;
     margin: 50px auto;
     background: aliceblue;
     padding: 10px;
+  }
+  
+  .todo-app > input {
+    display: block;
+    margin: auto;
+  }
+
+  .task-list {
+    width: 300px;
+    margin: 50px auto;
+    margin-top: 8px;
+    background: aliceblue;
+    padding: 0;
   }
   
   .task {

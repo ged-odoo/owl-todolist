@@ -34,17 +34,30 @@
     // App Component
     // -------------------------------------------------------------------------
     const APP_TEMPLATE = xml /* xml */`
+    <div class="todo-app">
+      <input placeholder="Enter a new task" t-on-keyup="addTask"/>
         <div class="task-list">
-            <t t-foreach="tasks" t-as="task" t-key="task.id">
-                <Task task="task"/>
-            </t>
-        </div>`;
+          <t t-foreach="tasks" t-as="task" t-key="task.id">
+            <Task task="task"/>
+          </t>
+       </div>
+    </div>`;
 
     class App extends Component {
         static template = APP_TEMPLATE;
         static components = { Task };
 
         tasks = TASKS;
+
+        addTask(ev) {
+            // 13 is keycode for ENTER
+            if (ev.keyCode === 13) {
+                const title = ev.target.value.trim();
+                ev.target.value = "";
+                console.log('adding task', title);
+                // todo
+            }
+        }
     }
 
     // Setup code
