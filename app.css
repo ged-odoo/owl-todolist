@@ -21,8 +21,26 @@
   .task {
     font-size: 18px;
     color: #111111;
+    display: grid;
+    grid-template-columns: 30px auto 30px;
   }
 
   .task.done {
     opacity: 0.7;
+  }
+
+
+  
+  .task > input {
+    margin: auto;
+  }
+  
+  .delete {
+    opacity: 0;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .task:hover .delete {
+    opacity: 1;
   }
