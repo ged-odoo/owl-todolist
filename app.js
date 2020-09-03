@@ -3,6 +3,8 @@
     const { xml } = owl.tags;
     const { whenReady } = owl.utils;
     
+    const { useRef } = owl.hooks;
+
     const TASKS = [
         {
           id: 1,
@@ -35,7 +37,7 @@
     // -------------------------------------------------------------------------
     const APP_TEMPLATE = xml /* xml */`
     <div class="todo-app">
-      <input placeholder="Enter a new task" t-on-keyup="addTask"/>
+    <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>  
         <div class="task-list">
           <t t-foreach="tasks" t-as="task" t-key="task.id">
             <Task task="task"/>
@@ -48,6 +50,11 @@
         static components = { Task };
 
         tasks = TASKS;
+        inputRef = useRef("add-input");
+
+        mounted() {
+            this.inputRef.el.focus();
+        }
 
         addTask(ev) {
             // 13 is keycode for ENTER
