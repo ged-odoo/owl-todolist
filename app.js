@@ -16,17 +16,34 @@
         },
     ];
 
+    // -------------------------------------------------------------------------
+    // Task Component
+    // -------------------------------------------------------------------------
+    const TASK_TEMPLATE = xml /* xml */`
+        <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
+            <input type="checkbox" t-att-checked="props.task.isCompleted"/>
+            <span><t t-esc="props.task.title"/></span>
+        </div>`;
+
+    class Task extends Component {
+        static template = TASK_TEMPLATE;
+        static props = ["task"];
+    }
+
+    // -------------------------------------------------------------------------
+    // App Component
+    // -------------------------------------------------------------------------
+    const APP_TEMPLATE = xml /* xml */`
+        <div class="task-list">
+            <t t-foreach="tasks" t-as="task" t-key="task.id">
+                <Task task="task"/>
+            </t>
+        </div>`;
+
     class App extends Component {
-        static template = xml/* xml */ `
-          <div class="task-list">
-              <t t-foreach="tasks" t-as="task" t-key="task.id">
-                <div class="task" t-att-class="task.isCompleted ? 'done' : ''">
-                  <input type="checkbox" t-att-checked="task.isCompleted"/>
-                  <span><t t-esc="task.title"/></span>
-                </div>
-              </t>
-          </div>`;
-      
+        static template = APP_TEMPLATE;
+        static components = { Task };
+
         tasks = TASKS;
     }
 
