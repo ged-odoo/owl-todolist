@@ -5,19 +5,6 @@
     
     const { useRef } = owl.hooks;
 
-    const TASKS = [
-        {
-          id: 1,
-          title: "buy milk",
-          isCompleted: true,
-        },
-        {
-          id: 2,
-          title: "clean house",
-          isCompleted: false,
-        },
-    ];
-
     // -------------------------------------------------------------------------
     // Task Component
     // -------------------------------------------------------------------------
@@ -49,7 +36,8 @@
         static template = APP_TEMPLATE;
         static components = { Task };
 
-        tasks = TASKS;
+        nextId = 1;
+        tasks = [];
         inputRef = useRef("add-input");
 
         mounted() {
@@ -61,8 +49,14 @@
             if (ev.keyCode === 13) {
                 const title = ev.target.value.trim();
                 ev.target.value = "";
-                console.log('adding task', title);
-                // todo
+                if (title) {
+                    const newTask = {
+                        id: this.nextId++,
+                        title: title,
+                        isCompleted: false,
+                    };
+                    this.tasks.push(newTask);
+                }
             }
         }
     }
