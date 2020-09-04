@@ -3,7 +3,55 @@
     const { xml } = owl.tags;
     const { whenReady } = owl.utils;
     
-    const { useRef, useState } = owl.hooks;
+    const { useRef, useSubEnv } = owl.hooks;
+
+    // -------------------------------------------------------------------------
+    // Model
+    // -------------------------------------------------------------------------
+    class TaskModel extends owl.core.EventBus {
+        nextId = 1
+        tasks = [];
+
+        constructor(tasks) {
+            super()
+            for (let task of tasks) {
+                this.tasks.push(task);
+                this.nextId = Math.max(this.nextId, task.id + 1);
+            }
+        }
+
+        addTask(title) {
+            const newTask = {
+                id: this.nextId++,
+                title: title,
+                isCompleted: false,
+            };
+            this.tasks.push(newTask);
+            this.trigger('update');
+        }
+
+        toggleTask(id) {
+            const task = this.tasks.find(t => t.id === id);
+            task.isCompleted = !task.isCompleted;
+            this.trigger('update')
+        }
+ 
+        deleteTask(id) {
+            const index = this.tasks.findIndex(t => t.id === id);
+            this.tasks.splice(index, 1);
+            this.trigger('update');
+        }
+    }
+
+    class StoredTaskModel extends TaskModel {
+        constructor(storage) {
+            const tasks = storage.getItem("todoapp");
+            super(tasks ? JSON.parse(tasks) : []);
+            this.on('update', this, () => {
+                storage.setItem("todoapp", JSON.stringify(this.tasks))
+            });
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Task Component
@@ -17,14 +65,13 @@
 
     class Task extends Component {
         static template = TASK_TEMPLATE;
-        static props = ["task"];
     
         toggleTask() {
-            this.trigger('toggle-task', {id: this.props.task.id});
+            this.env.model.toggleTask(this.props.task.id);
         }
 
         deleteTask() {
-            this.trigger('delete-task', {id: this.props.task.id});
+            this.env.model.deleteTask(this.props.task.id);
         }
     }
 
@@ -34,8 +81,8 @@
     const APP_TEMPLATE = xml /* xml */`
     <div class="todo-app">
     <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>  
-    <div class="task-list" t-on-toggle-task="toggleTask" t-on-delete-task="deleteTask">
-          <t t-foreach="tasks" t-as="task" t-key="task.id">
+    <div class="task-list">
+          <t t-foreach="env.model.tasks" t-as="task" t-key="task.id">
             <Task task="task"/>
           </t>
        </div>
@@ -45,20 +92,14 @@
         static template = APP_TEMPLATE;
         static components = { Task };
 
-        nextId = 1;
-        tasks = useState([]);
         inputRef = useRef("add-input");
-
-
+        
         constructor() {
             super();
-            const tasks = this.env.localStorage.getItem("todoapp");
-            if (tasks) {
-                for (let task of JSON.parse(tasks)) {
-                    this.tasks.push(task);
-                    this.nextId = Math.max(this.nextId, task.id + 1);
-                }
-            }
+            
+            const model = new StoredTaskModel(this.env.localStorage);
+            model.on('update', this, this.render);
+            useSubEnv({model});
         }
 
         mounted() {
@@ -71,28 +112,11 @@
                 const title = ev.target.value.trim();
                 ev.target.value = "";
                 if (title) {
-                    const newTask = {
-                        id: this.nextId++,
-                        title: title,
-                        isCompleted: false,
-                    };
-                    this.tasks.push(newTask);
-                    this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
+                    this.env.model.addTask(title);
                 }
             }
         }
 
-        toggleTask(ev) {
-            const task = this.tasks.find(t => t.id === ev.detail.id);
-            task.isCompleted = !task.isCompleted;
-            this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
-        }
- 
-        deleteTask(ev) {
-            const index = this.tasks.findIndex(t => t.id === ev.detail.id);
-            this.tasks.splice(index, 1);
-            this.env.localStorage.setItem("todoapp", JSON.stringify(this.tasks));
-        }
     }
 
     // Setup code
