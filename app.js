@@ -26,13 +26,28 @@
                 title: title,
                 isCompleted: false,
             };
-            this.tasks.push(newTask);
+            this.tasks.unshift(newTask);
             this.trigger('update');
         }
 
         toggleTask(id) {
             const task = this.tasks.find(t => t.id === id);
             task.isCompleted = !task.isCompleted;
+            this.tasks.sort(function (a,b) {
+                if (a.isCompleted) {
+                    if (b.isCompleted) {
+                        a.title.localeCompare(b.title)
+		    } else {
+			return 1;
+		    }
+		} else {
+                    if (b.isCompleted) {
+			return -1;
+		    } else {
+                        a.title.localeCompare(b.title)
+		    }
+		}
+	    });
             this.trigger('update')
         }
  
