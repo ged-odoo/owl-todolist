@@ -37,26 +37,26 @@
                 if (a.isCompleted) {
                     if (b.isCompleted) {
                         a.title.localeCompare(b.title)
-		    } else {
-			return 1;
-		    }
-		} else {
-                    if (b.isCompleted) {
-			return -1;
-		    } else {
-                        a.title.localeCompare(b.title)
-		    }
-		}
-	    });
-            this.trigger('update')
+                } else {
+                return 1;
+                }
+            } else {
+                        if (b.isCompleted) {
+                return -1;
+                } else {
+                            a.title.localeCompare(b.title)
+                }
+            }
+            });
+                this.trigger('update')
+            }
+    
+            deleteTask(id) {
+                const index = this.tasks.findIndex(t => t.id === id);
+                this.tasks.splice(index, 1);
+                this.trigger('update');
+            }
         }
- 
-        deleteTask(id) {
-            const index = this.tasks.findIndex(t => t.id === id);
-            this.tasks.splice(index, 1);
-            this.trigger('update');
-        }
-    }
 
     class StoredTaskModel extends TaskModel {
         constructor(storage) {
